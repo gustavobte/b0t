@@ -1,6 +1,9 @@
 <?php
-define('BOT_TOKEN', '429f88cdcb871e8fb963fceb971ce990');
-define('VERIFY_TOKEN', 'EAANxK09okKABAIkuNdcaT0y2owiNoWTYJUS3lpWsIB4DZCeKKqO2tPbU8JIjmzWty2hTkF4QLmhq93qXsDxKgIjr6BWo22teziYIpffjtVLgOOgGMib2lyD7oMZA8ZAhpg6EmpV53gZB5LVfQFqiKHn2QYM3pMpdUZCsrgy46HAZDZD');
+//https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
+require('parser.php');
+
+define('BOT_TOKEN', 'SEU ACCESS TOKEN');
+define('VERIFY_TOKEN', 'SEU VERIFY TOKEN');
 define('API_URL', 'https://graph.facebook.com/v2.6/me/messages?access_token='.BOT_TOKEN);
 
 $hub_verify_token = null;
@@ -18,10 +21,10 @@ function processMessage($message) {
 		  sendMessage(array('recipient' => array('id' => $sender), 'message' => array("text" => getResult('quina', $text))));
 		} else if ($text === "Lotomania") {
 		  sendMessage(array('recipient' => array('id' => $sender), 'message' => array("text" => getResult('lotomania', $text))));
-		} else if ($text === "Lotofácil" || $text === "Lotofacil") {
+		} else if ($text === "LotofÃ¡cil" || $text === "Lotofacil") {
 		  sendMessage(array('recipient' => array('id' => $sender), 'message' => array("text" => getResult('lotofacil', $text))));
 		} else {
-		  sendMessage(array('recipient' => array('id' => $sender), 'message' => array('text' => 'Olá! Eu sou um bot que informa os resultados das loterias da Caixa. Será que você ganhou dessa vez? Para começar, digite o nome do jogo para o qual deseja ver o resultado')));
+		  sendMessage(array('recipient' => array('id' => $sender), 'message' => array('text' => 'OlÃ¡! Eu sou um bot que informa os resultados das loterias da Caixa. SerÃ¡ que vocÃª ganhou dessa vez? Para comeÃ§ar, digite o nome do jogo para o qual deseja ver o resultado')));
 		}
   } 
 }
@@ -48,7 +51,14 @@ if(isset($_REQUEST['hub_challenge'])) {
 if ($hub_verify_token === VERIFY_TOKEN) {
     echo $challenge;
 }
-//-----FIM VERIFICAÇÃO-----//
+//-----FIM VERIFICAÃ‡ÃƒO-----//
 
+$update_response = file_get_contents("php://input");
+
+$update = json_decode($update_response, true);
+
+if (isset($update['entry'][0]['messaging'][0])) {
+  processMessage($update['entry'][0]['messaging'][0]);
+}
 
 ?>
